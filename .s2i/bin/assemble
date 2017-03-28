@@ -38,7 +38,7 @@ fix-permissions ./
 
 #./bin/console doctrine:database:create
 #./bin/console doctrine:schema:create
-./bin/console doctrine:fixtures:load
+#./bin/console doctrine:fixtures:load
 
 rm -rf var/cache/*
 rm -rf var/logs/*
