@@ -1,0 +1,45 @@
+#!/bin/bash
+
+## https://github.com/sclorg/s2i-php-container/blob/master/5.6/s2i/bin/assemble
+
+set -e
+
+shopt -s dotglob
+echo "---> Installing application source..."
+mv /tmp/src/* ./
+
+# Disable xdebug extension
+echo ";zend_extension=xdebug.so" > /etc/opt/rh/rh-php56/php.d/15-xdebug.ini
+
+if [ -f composer.json ]; then
+  echo "Found 'composer.json', installing dependencies using composer.phar... "
+
+  # Install Composer
+  curl -s https://getcomposer.org/installer | php
+
+  # Change the repo mirror if provided
+  if [ -n "$COMPOSER_MIRROR" ]; then
+    ./composer.phar config -g repositories.packagist composer $COMPOSER_MIRROR
+  fi
+
+  # Install App dependencies using Composer
+  php -d xdebug.remote_autostart=0 -d xdebug.remote_enable=0 -d xdebug.profiler_enable=0 -d xdebug.default_enable=0 ./composer.phar install --no-interaction --no-ansi --optimize-autoloader
+
+  if [ ! -f composer.lock ]; then
+    echo -e "\nConsider adding a 'composer.lock' file into your source repository.\n"
+  fi
+fi
+
+# Fix source directory permissions
+fix-permissions ./
+
+
+### Project specific deploy commands
+
+./bin/console doctrine:database:create
+./bin/console doctrine:schema:create
+./bin/console doctrine:fixtures:load
+
+rm -rf var/cache/*
+rm -rf var/logs/*
+rm -rf var/sessions/*
