@@ -14,6 +14,13 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
+    public function __construct($environment, $debug)
+    {
+        date_default_timezone_set('Europe/Bucharest');
+
+        parent::__construct($environment, $debug);
+    }    
+    
     public function registerBundles()
     {
         // When you install a third-party bundle or create a new bundle in your
