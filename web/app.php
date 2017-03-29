@@ -1,5 +1,7 @@
 <?php
 
+unset($_SERVER["HTTP_FORWARDED"]);
+
 /*
  * This file is part of the Symfony package.
  *
