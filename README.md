@@ -85,3 +85,5 @@ OpenShift / Kermit
 ------------------
 
 oc delete all --all --namespace=PROJECT_NAME
+
+test deploy
